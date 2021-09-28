@@ -1,13 +1,59 @@
 @import "~bootstrap/scss/bootstrap.scss";
 
-/* 
+body {
+    background-color: #e6e6e6;
+    min-height: 100vh;
+}
+.notePad {
+    background-color: #f7f7f7;
+    padding: 12px;
+    margin-top: 30px;
+    width: 400px;
+    height: auto;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
 
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
+h1 {
+    color: black;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 32px;
+    font-weight: 200;
+}
 
-*/
+input {
+    margin-bottom: 10px;
+    outline: none;
+    border:none;
+    border-bottom: 1px solid #595a5c;
+    padding: 5px 10px;
+}
+
+.todo {
+    width: 100%;
+    height: 35px;
+    background-color: white;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.todo_content {
+    margin: 0;
+}
+
+.todo_delete {
+    margin: 0;
+    width: 35px;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 200ms;
+}
+
+.todo:hover > .todo_delete {
+    opacity: 100;
+}
