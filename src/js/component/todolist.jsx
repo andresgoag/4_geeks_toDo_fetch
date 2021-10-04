@@ -1,4 +1,5 @@
 import React from "react";
+import { getTodos, updateTodos } from "../api";
 
 export const ToDoList = () => {
 	const [newTask, setNewTask] = React.useState("");
@@ -16,6 +17,25 @@ export const ToDoList = () => {
 
 		setListOfTasks(newArray);
 	};
+
+	React.useEffect(() => {
+		const fn = async () => {
+			const todos = await getTodos();
+			setListOfTasks(todos.map(item => item.label));
+		};
+		fn();
+	}, []);
+
+	React.useEffect(() => {
+		const fn = async () => {
+			updateTodos(
+				listOfTasks.map(item => ({ label: item, done: false }))
+			);
+		};
+		if (listOfTasks !== null) {
+			fn();
+		}
+	}, [listOfTasks]);
 
 	return (
 		<div className="notePad container-fluid">
@@ -49,7 +69,7 @@ export const ToDoList = () => {
 							onClick={() => {
 								deleteTask(index);
 							}}>
-							<i class="fas fa-times"></i>
+							<i className="fas fa-times"></i>
 						</p>
 					</div>
 				);
