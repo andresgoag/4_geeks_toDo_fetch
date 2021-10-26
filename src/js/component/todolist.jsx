@@ -1,5 +1,4 @@
 import React from "react";
-import { getTodos } from "../api";
 
 export const ToDoList = () => {
 	const user = "andresgoag";
@@ -18,53 +17,68 @@ export const ToDoList = () => {
 
 	const addToList = () => {
 		setListOfTasks([...listOfTasks, { label: newTask, done: false }]);
+		postData([...listOfTasks, { label: newTask, done: false }]);
 		setNewTask("");
+	};
+
+	const deleteUser = () => {
+		fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
+			method: "DELETE",
+			headers: { "Content-Type": "application/json" }
+		})
+			.then(response => getTodos())
+			.catch(error => console.error(error));
 	};
 
 	const deleteTask = index => {
 		const newArray = listOfTasks.filter((item, i) => {
 			return i !== index;
 		});
-
+		if (newArray.length == 0) {
+			deleteUser();
+		} else {
+			postData(newArray);
+		}
 		setListOfTasks(newArray);
 	};
 
-	React.useEffect(() => {
+	const getTodos = () => {
 		fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`)
 			.then(response => {
 				if (response.status == 200) {
 					return response.json();
+				} else if (response.status == 404) {
+					fetch(
+						`https://assets.breatheco.de/apis/fake/todos/user/${user}`,
+						{
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify([])
+						}
+					)
+						.then(response => getTodos())
+						.catch(error => console.error(error));
 				} else {
 					throw new Error("Error getting data from the server");
 				}
 			})
 			.then(data => setListOfTasks(data))
 			.catch(error => console.error(error));
-	}, []);
+	};
+
+	const postData = tasks => {
+		fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(tasks)
+		})
+			.then(response => getTodos())
+			.catch(error => console.error(error));
+	};
 
 	React.useEffect(() => {
-		const postData = () => {
-			fetch(`https://assets.breatheco.de/apis/fake/todos/user/${user}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(listOfTasks)
-			});
-		};
-
-		if (listOfTasks !== null) {
-			if (listOfTasks.length == 0) {
-				fetch(
-					`https://assets.breatheco.de/apis/fake/todos/user/${user}`,
-					{
-						method: "DELETE",
-						headers: { "Content-Type": "application/json" }
-					}
-				);
-			} else {
-				postData();
-			}
-		}
-	}, [listOfTasks]);
+		getTodos();
+	}, []);
 
 	return (
 		<div className="main-container">
